@@ -7,8 +7,10 @@ import torch.nn.functional as F
 from torchvision.transforms import Compose
 from tqdm import tqdm
 
-from depth_anything.dpt import DepthAnything
+
 from depth_anything.util.transform import Resize, NormalizeImage, PrepareForNet
+from depth_anything.dpt import DepthAnything
+
 
 
 if __name__ == '__main__':
@@ -31,8 +33,17 @@ if __name__ == '__main__':
     
     DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
     
-    depth_anything = DepthAnything.from_pretrained('LiheYoung/depth_anything_{}14'.format(args.encoder)).to(DEVICE).eval()
-    
+    # depth_anything = DepthAnything.from_pretrained('LiheYoung/depth_anything_{}14'.format(args.encoder)).to(DEVICE).eval()
+    model_configs = {
+        'vitl': {'encoder': 'vitl', 'features': 256, 'out_channels': [256, 512, 1024, 1024]},
+        'vitb': {'encoder': 'vitb', 'features': 128, 'out_channels': [96, 192, 384, 768]},
+        'vits': {'encoder': 'vits', 'features': 64, 'out_channels': [48, 96, 192, 384]}
+    }
+
+    encoder = 'vits'  # or 'vitb', 'vits'
+    depth_anything = DepthAnything(model_configs[encoder])
+    depth_anything.load_state_dict(
+        torch.load(f'/home/sil/data/depth_anything/checkpoints/depth_anything_{encoder}14.pth'))
     total_params = sum(param.numel() for param in depth_anything.parameters())
     print('Total parameters: {:.2f}M'.format(total_params / 1e6))
     
@@ -59,7 +70,11 @@ if __name__ == '__main__':
     else:
         filenames = os.listdir(args.img_path)
         filenames = [os.path.join(args.img_path, filename) for filename in filenames if not filename.startswith('.')]
-        filenames.sort()
+
+
+        def ret_index(path):
+            return int(path.split('_')[-1].split('.')[0])
+        filenames.sort(key=ret_index)
     
     os.makedirs(args.outdir, exist_ok=True)
     
