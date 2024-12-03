@@ -73,10 +73,11 @@ def evaluate(model, test_loader, config, round_vals=True, round_precision=3):
             if not sample['has_valid_depth']:
                 continue
         image, depth = sample['image'], sample['depth']
-        image, depth = image.cuda(), depth.cuda()
+        # image, depth = image.cuda(), depth.cuda()
         depth = depth.squeeze().unsqueeze(0).unsqueeze(0)
         focal = sample.get('focal', torch.Tensor(
-            [715.0873]).cuda())  # This magic number (focal) is only used for evaluating BTS model
+            [715.0873]))  # This magic number (focal) is only used for evaluating BTS model
+            # [715.0873]).cuda())  # This magic number (focal) is only used for evaluating BTS model
         pred = infer(model, image, dataset=sample['dataset'][0], focal=focal)
 
         # Save image, depth, pred for visualization
@@ -111,7 +112,7 @@ def evaluate(model, test_loader, config, round_vals=True, round_precision=3):
 def main(config):
     model = build_model(config)
     test_loader = DepthDataLoader(config, 'online_eval').data
-    model = model.cuda()
+    # model = model.cuda()
     metrics = evaluate(model, test_loader, config)
     print(f"{colors.fg.green}")
     print(metrics)
@@ -125,6 +126,7 @@ def eval_model(model_name, pretrained_resource, dataset='nyu', **kwargs):
     # Load default pretrained resource defined in config if not set
     overwrite = {**kwargs, "pretrained_resource": pretrained_resource} if pretrained_resource else kwargs
     config = get_config(model_name, "eval", dataset, **overwrite)
+    config.save_images = "/home/sil/data/saved_images/"
     # config = change_dataset(config, dataset)  # change the dataset
     pprint(config)
     print(f"Evaluating {model_name} on {dataset}...")
