@@ -37,8 +37,8 @@ import argparse
 import os
 
 os.environ["PYOPENGL_PLATFORM"] = "egl"
-os.environ["WANDB_START_METHOD"] = "thread"
-
+# os.environ["WANDB_START_METHOD"] = "thread"
+os.environ["WANDB_DISABLED"] = "true"
 
 def fix_random_seed(seed: int):
     import random
