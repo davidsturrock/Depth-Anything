@@ -23,7 +23,7 @@
 # File author: Shariq Farooq Bhat
 
 import torch
-import torch.cuda.amp as amp
+# import torch.cuda.amp as amp
 import torch.amp as amp
 import torch.nn as nn
 
@@ -70,7 +70,7 @@ class Trainer(BaseTrainer):
 
         losses = {}
 
-        with amp.autocast(enabled=self.config.use_amp):
+        with amp.autocast('cuda', enabled=self.config.use_amp):
             output = self.model(images)
             pred_depths = output['metric_depth']
             domain_logits = output['domain_logits']
@@ -123,14 +123,14 @@ class Trainer(BaseTrainer):
                 return None, None
 
         depths_gt = depths_gt.squeeze().unsqueeze(0).unsqueeze(0)
-        with amp.autocast(enabled=self.config.use_amp):
+        with amp.autocast('cuda', enabled=self.config.use_amp):
             m = self.model.module if self.config.multigpu else self.model
             pred_depths = m(images)["metric_depth"]
         pred_depths = pred_depths.squeeze().unsqueeze(0).unsqueeze(0)
 
         mask = torch.logical_and(
             depths_gt > self.config.min_depth, depths_gt < self.config.max_depth)
-        with amp.autocast(enabled=self.config.use_amp):
+        with amp.autocast('cuda', enabled=self.config.use_amp):
             l_depth = self.silog_loss(
                 pred_depths, depths_gt, mask=mask.to(torch.bool), interpolate=True)
 
