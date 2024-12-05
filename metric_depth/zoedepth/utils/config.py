@@ -105,7 +105,7 @@ DATASETS_CONFIG = {
         "filenames_file": "./train_test_inputs/nyudepthv2_train_files_with_gt.txt",
         "input_height": 480,
         "input_width": 640,
-        "data_path_eval": os.path.join(HOME_DIR, "nyu"),
+        "data_path_eval": os.path.join(HOME_DIR, "nyu_test"),
         "gt_path_eval": os.path.join(HOME_DIR, "nyu_test"),
         "filenames_file_eval": "./train_test_inputs/nyudepthv2_test_files_with_gt.txt",
         "min_depth_eval": 1e-3,
@@ -238,7 +238,7 @@ ALL_EVAL_DATASETS = ALL_INDOOR + ALL_OUTDOOR
 COMMON_TRAINING_CONFIG = {
     "dataset": "nyu",
     "distributed": True,
-    "workers": 8,
+    "workers": 16,
     "clip_grad": 0.1,
     "use_shared_dict": False,
     "shared_dict": None,
