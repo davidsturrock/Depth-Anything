@@ -24,6 +24,7 @@
 
 import torch
 import torch.cuda.amp as amp
+import torch.amp as amp
 import torch.nn as nn
 
 from zoedepth.trainers.loss import GradL1Loss, SILogLoss
@@ -42,7 +43,8 @@ class Trainer(BaseTrainer):
         self.grad_loss = GradL1Loss()
         self.domain_classifier_loss = nn.CrossEntropyLoss()
 
-        self.scaler = amp.GradScaler(enabled=self.config.use_amp)
+        # self.scaler = amp.GradScaler(enabled=self.config.use_amp)
+        self.scaler = amp.GradScaler('cuda', enabled=self.config.use_amp)
 
     def train_on_batch(self, batch, train_step):
         """

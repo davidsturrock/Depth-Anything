@@ -23,7 +23,8 @@
 # File author: Shariq Farooq Bhat
 
 import torch
-import torch.cuda.amp as amp
+# import torch.cuda.amp as amp
+import torch.amp as amp
 import torch.nn as nn
 
 from zoedepth.trainers.loss import GradL1Loss, SILogLoss
@@ -43,7 +44,8 @@ class Trainer(BaseTrainer):
         self.device = device
         self.silog_loss = SILogLoss()
         self.grad_loss = GradL1Loss()
-        self.scaler = amp.GradScaler(enabled=self.config.use_amp)
+        # self.scaler = amp.GradScaler(enabled=self.config.use_amp)
+        self.scaler = amp.GradScaler('cuda', enabled=self.config.use_amp)
 
     def train_on_batch(self, batch, train_step):
         """
