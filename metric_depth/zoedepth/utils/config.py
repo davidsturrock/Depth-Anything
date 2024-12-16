@@ -72,6 +72,29 @@ DATASETS_CONFIG = {
         "eigen_crop": False,
         "use_right": False
     },
+    "oranges": {
+        "dataset": "oranges",
+        "min_depth": 0.001,
+        "max_depth": 80,
+        "data_path": os.path.join(HOME_DIR, "oranges/train"),
+        "gt_path": os.path.join(HOME_DIR, "oranges/train"),
+        "filenames_file": "./train_test_inputs/oranges_train_files_with_gt.txt",
+        "input_height": 720,
+        "input_width": 1280,
+        "data_path_eval": os.path.join(HOME_DIR, "oranges/val"),
+        "gt_path_eval": os.path.join(HOME_DIR, "oranges/val"),
+        "filenames_file_eval": "./train_test_inputs/oranges_test_files_with_gt.txt",
+
+        "min_depth_eval": 1e-3,
+        "max_depth_eval": 80,
+
+        "do_random_rotate": True,
+        "degree": 1.0,
+        "do_kb_crop": True,
+        "garg_crop": True,
+        "eigen_crop": False,
+        "use_right": False
+    },
     "kitti_test": {
         "dataset": "kitti",
         "min_depth": 0.001,

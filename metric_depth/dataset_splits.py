@@ -3,8 +3,8 @@ import splitfolders
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output_dir", type=str, default='/home/sil/data/farm_monos/splits')
-    parser.add_argument("-i", "--input_dir", type=str,default='/home/sil/data/farm_monos/image/')
+    parser.add_argument("-o", "--output_dir", type=str, default='/home/sil/data/oranges data/splits')
+    parser.add_argument("-i", "--input_dir", type=str,default='/home/sil/data/oranges data/classes/')
     parser.add_argument("-r", "--ratio", type=tuple, default=(.8, 0.1, 0.1))
     parser.add_argument("-s", "--seed", type=int, default=42)
     args, unknown_args = parser.parse_known_args()
