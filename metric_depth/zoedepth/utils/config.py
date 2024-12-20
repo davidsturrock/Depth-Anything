@@ -54,12 +54,12 @@ DATASETS_CONFIG = {
         "min_depth": 0.001,
         "max_depth": 80,
         "data_path": os.path.join(HOME_DIR, "Kitti/raw_data"),
-        "gt_path": os.path.join(HOME_DIR, "Kitti/data_depth_annotated_zoedepth"),
+        "gt_path": os.path.join(HOME_DIR, "Kitti/data_depth_annotated/train"),
         "filenames_file": "./train_test_inputs/kitti_eigen_train_files_with_gt.txt",
         "input_height": 352,
         "input_width": 1216,  # 704
         "data_path_eval": os.path.join(HOME_DIR, "Kitti/raw_data"),
-        "gt_path_eval": os.path.join(HOME_DIR, "Kitti/data_depth_annotated_zoedepth"),
+        "gt_path_eval": os.path.join(HOME_DIR, "Kitti/data_depth_annotated/val"),
         "filenames_file_eval": "./train_test_inputs/kitti_eigen_test_files_with_gt.txt",
 
         "min_depth_eval": 1e-3,
