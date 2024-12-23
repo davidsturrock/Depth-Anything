@@ -297,7 +297,7 @@ class BaseTrainer:
             except AttributeError:
                 min_depth = None
                 max_depth = None
-        print(f'Max depth in gt dense depth maps: {max([max(v) for v in depth.values()])}')
+        print(f'Max depth in gt dense depth maps: {max([v.max() for v in depth.values()])}')
         depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
                  for k, v in depth.items()}
 
