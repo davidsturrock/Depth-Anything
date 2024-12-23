@@ -347,7 +347,10 @@ class DataLoadPreprocess(Dataset):
                     depth_gt, random_angle, flag=Image.NEAREST)
 
             image = np.asarray(image, dtype=np.float32) / 255.0
-            depth_gt = np.asarray(depth_gt, dtype=np.float32)
+            if self.config.dataset == 'oranges':
+                depth_gt = np.asarray(depth_gt, dtype=np.uint16)
+            else:
+                depth_gt = np.asarray(depth_gt, dtype=np.float32)
             depth_gt = np.expand_dims(depth_gt, axis=2)
 
             if self.config.dataset == 'nyu' or self.config.dataset == 'oranges':
@@ -393,7 +396,10 @@ class DataLoadPreprocess(Dataset):
                     # print('Missing gt for {}'.format(image_path))
 
                 if has_valid_depth:
-                    depth_gt = np.asarray(depth_gt, dtype=np.float32)
+                    if self.config.dataset == 'oranges':
+                        depth_gt = np.asarray(depth_gt, dtype=np.uint16)
+                    else:
+                        depth_gt = np.asarray(depth_gt, dtype=np.float32)
                     depth_gt = np.expand_dims(depth_gt, axis=2)
                     if self.config.dataset == 'nyu' or self.config.dataset == 'oranges':
                         depth_gt = depth_gt / 1000.0
