@@ -301,10 +301,10 @@ class BaseTrainer:
         # depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
         #          for k, v in depth.items()}
 
-        depth = {k: np.uint16(v.squeeze().cpu().numpy()) * 1000 for k, v in depth.items()}
+        depth = {k: np.uint16(v.squeeze().detach().cpu().numpy()) * 1000 for k, v in depth.items()}
         # scalar_field = {k: colorize(
         #     v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
-        scalar_field = {k: np.uint16(v.squeeze().cpu().numpy()) * 1000 for k, v in scalar_field.items()}
+        scalar_field = {k: np.uint16(v.squeeze().detach().cpu().numpy()) * 1000 for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
         wimages = {
             prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
