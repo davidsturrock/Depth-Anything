@@ -286,7 +286,7 @@ class BaseTrainer:
                 "epoch": self.epoch
             }, fpath)
 
-    def log_images(self, rgb: Dict[str, list] = {}, depth: Dict[str, list] = {}, scalar_field: Dict[str, list] = {}, prefix="", scalar_cmap="jet", min_depth=None, max_depth=None):
+    def log_images(self, rgb: Dict[str, list] = {}, depth: Dict[str, list] = {}, scalar_field: Dict[str, list] = {}, prefix="", scalar_cmap="gray_r", min_depth=None, max_depth=None):
         if not self.should_log:
             return
 
@@ -297,14 +297,12 @@ class BaseTrainer:
             except AttributeError:
                 min_depth = None
                 max_depth = None
+        print(f'Max depth in gt dense depth maps: {max([max(v) for v in depth.values()])}')
+        depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
+                 for k, v in depth.items()}
 
-        # depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
-        #          for k, v in depth.items()}
-
-        depth = {k: np.uint16(v.squeeze().detach().cpu().numpy()) * 1000 for k, v in depth.items()}
-        # scalar_field = {k: colorize(
-        #     v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
-        scalar_field = {k: np.uint16(v.squeeze().detach().cpu().numpy()) * 1000 for k, v in scalar_field.items()}
+        scalar_field = {k: colorize(
+            v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
         wimages = {
             prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
