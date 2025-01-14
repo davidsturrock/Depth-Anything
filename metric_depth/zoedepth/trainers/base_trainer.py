@@ -303,11 +303,11 @@ class BaseTrainer:
         # depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
         #          for k, v in depth.items()}
         scalar_field = {"scalar_field"+k: v for k, v in scalar_field.items()}
-        print(f'Depth img info) {depth.values()[0].type}')
         # cv2.imwrite(scalar_field.keys(),scalar_field.values())
         # cv2.imwrite(depth.keys(), depth.values())
         print(f'Depth field Key (img path) {depth.keys()}')
         print(f'RGB field Key (img path) {rgb.keys()}')
+        print(f'Depth img info) {list(depth.values())[0]}')
         # scalar_field = {k: colorize(
         #     v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
