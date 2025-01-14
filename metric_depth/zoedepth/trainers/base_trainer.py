@@ -28,6 +28,7 @@ import warnings
 from datetime import datetime as dt
 from typing import Dict
 
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -297,15 +298,23 @@ class BaseTrainer:
             except AttributeError:
                 min_depth = None
                 max_depth = None
-        print(f'Max depth in gt dense depth maps: {max([v.max() for v in depth.values()])}')
-        depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
-                 for k, v in depth.items()}
+        # print(f'AvgMax depth in gt dense depth maps: {max([v.max() for v in depth.values()])}')
+        # print(f'Avg DepthMax depth in pred dense depth maps: {max([v.max() for v in scalar_field.values()])}')
+        # depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
+        #          for k, v in depth.items()}
+        depth = {"depth"+k: v for k, v in depth.items()}
+        scalar_field = {"pred"+k: v for k, v in scalar_field.items()}
+        cv2.imwrite(** scalar_field)
+        cv2.imwrite(** depth)
+        cv2.imwrite(** rgb)
 
-        scalar_field = {k: colorize(
-            v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
+        # scalar_field = {k: colorize(
+        #     v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
-        wimages = {
-            prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
+        # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
+        # Provide only pathnames of images. Images already saved to disk using cv2. This is to create
+        # log association for wandb
+        wimages = {prefix+"Predictions": [wandb.Image(k) for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
 
     def log_line_plot(self, data):
