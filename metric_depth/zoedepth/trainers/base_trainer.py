@@ -303,17 +303,21 @@ class BaseTrainer:
         # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         mean_d = np.mean(depth["GT"])
         max_d = np.max(depth["GT"])
+        min_d = np.min(depth["GT"])
         pred_mean = np.mean(depth["PredictedMono"])
         pred_max = np.max(depth["PredictedMono"])
+        pred_min = np.min(depth["PredictedMono"])
         # Cvt to uint16 and mm from m
-        depth = {k: np.uint16(v) * 1000 for k, v in depth.items()}
-        mean_d_16 = np.mean(depth["GT"])
-        max_d_16 = np.max(depth["GT"])
-        pred_mean_16 = np.mean(depth["PredictedMono"])
-        pred_max_16 = np.max(depth["PredictedMono"])
-        print(f'\nGT Avg: {mean_d:.2f} Max: {max_d:.2f} | uint16 {mean_d_16}  {max_d_16}')
-        print(f'\nPredMono Avg: {pred_mean:.2f} Max: {pred_max:.2f}| uint16 {pred_mean_16}  {pred_max_16}')
+        # depth = {k: np.uint16(v) * 1000 for k, v in depth.items()}
 
+        # mean_d_16 = np.mean(depth["GT"])
+        # max_d_16 = np.max(depth["GT"])
+        # pred_mean_16 = np.mean(depth["PredictedMono"])
+        # pred_max_16 = np.max(depth["PredictedMono"])
+        # print(f'\nGT Avg: {mean_d:.2f} Max: {max_d:.2f} | uint16 {mean_d_16}  {max_d_16}')
+        # print(f'\nPredMono Avg: {pred_mean:.2f} Max: {pred_max:.2f}| uint16 {pred_mean_16}  {pred_max_16}')
+        print(f'GT Datatype: {depth["GT"].dtype} | Predicted Datatype: {depth["PredictedMono"].dtype}')
+        print(f'\nGT Avg: {mean_d:.2f} Max: {max_d:.2f} Min: {min_d:.2f}|PredMono {pred_mean:.2f} {pred_max:.2f} {pred_min:.2f}')
         images = {**rgb, **depth, **scalar_field}
         # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
