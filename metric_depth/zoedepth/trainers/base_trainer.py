@@ -297,7 +297,8 @@ class BaseTrainer:
             except AttributeError:
                 min_depth = None
                 max_depth = None
-        print(f'\nGT Avg: {torch.mean(depth["GT"]).item():.2f} Max: {max([depth["GT"]]):.2f}')
+        print(f'\nGT Avg: {torch.mean(depth["GT"]).item():.2f}')
+        print(f'Max: {max([depth["GT"]]):.2f}')
         print(f'\nPredMono Avg: {torch.mean(depth["PredictedMono"]).item():.2f} Max: {max([depth["PredictedMono"]]):.2f}')
         # depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
         #          for k, v in depth.items()}
