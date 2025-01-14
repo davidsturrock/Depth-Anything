@@ -315,9 +315,9 @@ class BaseTrainer:
         for path, img in images.items():
             if 'GT' in path:
                 img = img.squeeze().unsqueeze(0).unsqueeze(0)
-                cv2.imwrite(path + '.png', img.squeeze().cpu().numpy())
+                cv2.imwrite(path + '.png', img.squeeze().detach().cpu().numpy())
             else:
-                cv2.imwrite(path + '.png', img.cpu().numpy())
+                cv2.imwrite(path + '.png', img.detach().cpu().numpy())
 
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         # Provide only pathnames of images. Images already saved to disk using cv2. This is to create
