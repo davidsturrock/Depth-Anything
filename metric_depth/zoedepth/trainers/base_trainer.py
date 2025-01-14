@@ -28,6 +28,7 @@ import warnings
 from datetime import datetime as dt
 from typing import Dict
 
+import PIL
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
@@ -312,22 +313,24 @@ class BaseTrainer:
         # scalar_field = {k: colorize(
         #     v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
-        for path, img in images.items():
-            if 'GT' in path:
-                img = img.squeeze().unsqueeze(0).unsqueeze(0)
-                img = img.squeeze().detach().cpu().numpy()
-                print(f'Depth img info post process) {img.shape}')
-
-                cv2.imwrite(path + '.png', img)
-            else:
-                img = img.detach().cpu().numpy()
-                print(f'Depth img info post process) {img.shape}')
-                cv2.imwrite(path + '.png', img)
-
-        # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
+        # for path, img in images.items():
+        #     if 'GT' in path:
+        #         img = img.squeeze().unsqueeze(0).unsqueeze(0)
+        #         img = img.squeeze().detach().cpu().numpy()
+        #         print(f'Depth img info post process) {img.shape}')
+        #
+        #         cv2.imwrite(path + '.png', img)
+        #         PIL.Image.fromarray(img).save(path + '.png')
+        #     else:
+        #         img = img.detach().cpu().numpy()
+        #         print(f'Depth img info post process) {img.shape}')
+        #         cv2.imwrite(path + '.png', img)
+        # Specify 'I;16' uint16 when saving the depth images
+        wimages = {prefix+"Predictions": [ wandb.Image(v, caption=k) if 'Input' in k else wandb.Image(v, caption=k, mode='I;16')
+                                          for k, v in images.items()]}
         # Provide only pathnames of images. Images already saved to disk using cv2. This is to create
         # log association for wandb
-        wimages = {prefix+"Predictions": [wandb.Image(k+'.png') for k, v in images.items()]}
+        # wimages = {prefix+"Predictions": [wandb.Image(k+'.png') for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
 
     def log_line_plot(self, data):
