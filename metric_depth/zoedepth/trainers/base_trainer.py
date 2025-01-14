@@ -28,8 +28,6 @@ import warnings
 from datetime import datetime as dt
 from typing import Dict
 
-import PIL
-import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -299,38 +297,15 @@ class BaseTrainer:
             except AttributeError:
                 min_depth = None
                 max_depth = None
-        # print(f'AvgMax depth in gt dense depth maps: {max([v.max() for v in depth.values()])}')
-        # print(f'Avg DepthMax depth in pred dense depth maps: {max([v.max() for v in scalar_field.values()])}')
+        print(f'\nGT Avg: {np.mean(depth["GT"]):.2f} Max: {max([depth["GT"]]):.2f}')
+        print(f'\nPredMono Avg: {np.mean(depth["PredictedMono"]):.2f} Max: {max([depth["PredictedMono"]]):.2f}')
         # depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
         #          for k, v in depth.items()}
-        scalar_field = {"scalar_field"+k: v for k, v in scalar_field.items()}
-
-        # print(f'Depth field Key (img path) {depth.keys()}')
-        # print(f'RGB field Key (img path) {rgb.keys()}')
-        print(f'Depth img info) {list(depth.values())[0].shape}')
-        print(f'Pred img info) {list(depth.values())[1].shape}')
-        print(f'RGB img info) {list(rgb.values())[0].shape}')
-        # scalar_field = {k: colorize(
-        #     v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
+        # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
-        # for path, img in images.items():
-        #     if 'GT' in path:
-        #         img = img.squeeze().unsqueeze(0).unsqueeze(0)
-        #         img = img.squeeze().detach().cpu().numpy()
-        #         print(f'Depth img info post process) {img.shape}')
-        #
-        #         cv2.imwrite(path + '.png', img)
-        #         PIL.Image.fromarray(img).save(path + '.png')
-        #     else:
-        #         img = img.detach().cpu().numpy()
-        #         print(f'Depth img info post process) {img.shape}')
-        #         cv2.imwrite(path + '.png', img)
-        # Specify 'I;16' uint16 when saving the depth images
-        wimages = {prefix+"Predictions": [ wandb.Image(v, caption=k) if 'Input' in k else wandb.Image(v, caption=k, mode='I;16')
+        # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
+        wimages = {prefix+"Predictions": [ wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
                                           for k, v in images.items()]}
-        # Provide only pathnames of images. Images already saved to disk using cv2. This is to create
-        # log association for wandb
-        # wimages = {prefix+"Predictions": [wandb.Image(k+'.png') for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
 
     def log_line_plot(self, data):
