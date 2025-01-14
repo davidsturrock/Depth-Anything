@@ -304,13 +304,16 @@ class BaseTrainer:
         #          for k, v in depth.items()}
         depth = {"depth"+k: v for k, v in depth.items()}
         scalar_field = {"pred"+k: v for k, v in scalar_field.items()}
-        cv2.imwrite(** scalar_field)
-        cv2.imwrite(** depth)
-        cv2.imwrite(** rgb)
-
+        print(f'Scalar field Key (img path) {scalar_field.keys()}')
+        # cv2.imwrite(scalar_field.keys(),scalar_field.values())
+        # cv2.imwrite(depth.keys(), depth.values())
+        print(f'Depth field Key (img path) {depth.keys()}')
+        print(f'RGB field Key (img path) {rgb.keys()}')
         # scalar_field = {k: colorize(
         #     v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
+        for path, img in images.items():
+            cv2.imwrite(path, img)
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         # Provide only pathnames of images. Images already saved to disk using cv2. This is to create
         # log association for wandb
