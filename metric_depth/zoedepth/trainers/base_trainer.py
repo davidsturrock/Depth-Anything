@@ -303,16 +303,22 @@ class BaseTrainer:
         # depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
         #          for k, v in depth.items()}
         scalar_field = {"scalar_field"+k: v for k, v in scalar_field.items()}
-        # cv2.imwrite(scalar_field.keys(),scalar_field.values())
-        # cv2.imwrite(depth.keys(), depth.values())
+
         print(f'Depth field Key (img path) {depth.keys()}')
         print(f'RGB field Key (img path) {rgb.keys()}')
-        print(f'Depth img info) {list(depth.values())[0]}')
+        print(f'Depth img info) {list(depth.values())[0].shape}')
+        print(f'Pred img info) {list(depth.values())[1].shape}')
+        print(f'RGB img info) {list(rgb.values())[0].shape}')
         # scalar_field = {k: colorize(
         #     v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
         for path, img in images.items():
-            cv2.imwrite(path, img.squeeze().cpu().numpy())
+            if 'GT' in path:
+                img = img.squeeze().unsqueeze(0).unsqueeze(0)
+                cv2.imwrite(path, img.squeeze().cpu().numpy())
+            else:
+                cv2.imwrite(path, img.cpu().numpy())
+
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         # Provide only pathnames of images. Images already saved to disk using cv2. This is to create
         # log association for wandb
