@@ -297,11 +297,15 @@ class BaseTrainer:
             except AttributeError:
                 min_depth = None
                 max_depth = None
+
+        depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
+                 for k, v in depth.items()}
+        # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         print(f'\nGT Avg: {torch.mean(depth["GT"]).item():.2f} Max: {torch.max(depth["GT"]).item():.2f}')
         print(f'\nPredMono Avg: {torch.mean(depth["PredictedMono"]).item():.2f} Max: {torch.max(depth["PredictedMono"]).item():.2f}')
-        # depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
-        #          for k, v in depth.items()}
-        # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
+        depth = {k: np.uint16(v) * 1000 for k, v in depth.items()}
+        print(f'\nGT Avg: {torch.mean(depth["GT"]).item():.2f} Max: {torch.max(depth["GT"]).item():.2f}')
+        print(f'\nPredMono Avg: {torch.mean(depth["PredictedMono"]).item():.2f} Max: {torch.max(depth["PredictedMono"]).item():.2f}')
         images = {**rgb, **depth, **scalar_field}
         # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
