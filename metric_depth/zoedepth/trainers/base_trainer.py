@@ -301,10 +301,10 @@ class BaseTrainer:
         depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
                  for k, v in depth.items()}
         # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
-        mean_d = torch.mean(depth["GT"]).item()
-        max_d = torch.max(depth["GT"]).item()
-        pred_mean = torch.mean(depth["PredictedMono"]).item()
-        pred_max = torch.max(depth["PredictedMono"]).item()
+        mean_d = np.mean(depth["GT"])
+        max_d = np.max(depth["GT"])
+        pred_mean = np.mean(depth["PredictedMono"])
+        pred_max = np.max(depth["PredictedMono"])
         # Cvt to uint16 and mm from m
         depth = {k: np.uint16(v) * 1000 for k, v in depth.items()}
         mean_d_16 = np.mean(depth["GT"])
