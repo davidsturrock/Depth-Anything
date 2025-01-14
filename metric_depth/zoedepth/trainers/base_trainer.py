@@ -304,8 +304,8 @@ class BaseTrainer:
         #          for k, v in depth.items()}
         scalar_field = {"scalar_field"+k: v for k, v in scalar_field.items()}
 
-        print(f'Depth field Key (img path) {depth.keys()}')
-        print(f'RGB field Key (img path) {rgb.keys()}')
+        # print(f'Depth field Key (img path) {depth.keys()}')
+        # print(f'RGB field Key (img path) {rgb.keys()}')
         print(f'Depth img info) {list(depth.values())[0].shape}')
         print(f'Pred img info) {list(depth.values())[1].shape}')
         print(f'RGB img info) {list(rgb.values())[0].shape}')
@@ -315,9 +315,14 @@ class BaseTrainer:
         for path, img in images.items():
             if 'GT' in path:
                 img = img.squeeze().unsqueeze(0).unsqueeze(0)
-                cv2.imwrite(path + '.png', img.squeeze().detach().cpu().numpy())
+                img = img.squeeze().detach().cpu().numpy()
+                print(f'Depth img info post process) {img.shape}')
+
+                cv2.imwrite(path + '.png', img)
             else:
-                cv2.imwrite(path + '.png', img.detach().cpu().numpy())
+                img = img.detach().cpu().numpy()
+                print(f'Depth img info post process) {img.shape}')
+                cv2.imwrite(path + '.png', img)
 
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         # Provide only pathnames of images. Images already saved to disk using cv2. This is to create
