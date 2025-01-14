@@ -315,14 +315,14 @@ class BaseTrainer:
         for path, img in images.items():
             if 'GT' in path:
                 img = img.squeeze().unsqueeze(0).unsqueeze(0)
-                cv2.imwrite(path, img.squeeze().cpu().numpy())
+                cv2.imwrite(path + '.png', img.squeeze().cpu().numpy())
             else:
-                cv2.imwrite(path, img.cpu().numpy())
+                cv2.imwrite(path + '.png', img.cpu().numpy())
 
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         # Provide only pathnames of images. Images already saved to disk using cv2. This is to create
         # log association for wandb
-        wimages = {prefix+"Predictions": [wandb.Image(k) for k, v in images.items()]}
+        wimages = {prefix+"Predictions": [wandb.Image(k+'.png') for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
 
     def log_line_plot(self, data):
