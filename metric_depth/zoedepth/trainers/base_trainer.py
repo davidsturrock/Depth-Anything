@@ -322,7 +322,8 @@ class BaseTrainer:
         # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
         #                                   for k, v in images.items()]}
-        wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode='I;16') for k, v in images.items()]}
+        # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode='I;16') for k, v in images.items()]}
+        wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
 
     def log_line_plot(self, data):
