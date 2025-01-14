@@ -302,9 +302,8 @@ class BaseTrainer:
         # print(f'Avg DepthMax depth in pred dense depth maps: {max([v.max() for v in scalar_field.values()])}')
         # depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
         #          for k, v in depth.items()}
-        depth = {"depth"+k: v for k, v in depth.items()}
-        scalar_field = {"pred"+k: v for k, v in scalar_field.items()}
-        print(f'Scalar field Key (img path) {scalar_field.keys()}')
+        scalar_field = {"scalar_field"+k: v for k, v in scalar_field.items()}
+        print(f'Depth img info) {depth.values()[0].type}')
         # cv2.imwrite(scalar_field.keys(),scalar_field.values())
         # cv2.imwrite(depth.keys(), depth.values())
         print(f'Depth field Key (img path) {depth.keys()}')
@@ -313,7 +312,7 @@ class BaseTrainer:
         #     v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
         for path, img in images.items():
-            cv2.imwrite(path, img)
+            cv2.imwrite(path, img.squeeze().cpu().numpy())
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         # Provide only pathnames of images. Images already saved to disk using cv2. This is to create
         # log association for wandb
