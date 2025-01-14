@@ -301,11 +301,19 @@ class BaseTrainer:
         depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
                  for k, v in depth.items()}
         # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
-        print(f'\nGT Avg: {torch.mean(depth["GT"]).item():.2f} Max: {torch.max(depth["GT"]).item():.2f}')
-        print(f'\nPredMono Avg: {torch.mean(depth["PredictedMono"]).item():.2f} Max: {torch.max(depth["PredictedMono"]).item():.2f}')
+        mean_d = torch.mean(depth["GT"]).item()
+        max_d = torch.max(depth["GT"]).item()
+        pred_mean = torch.mean(depth["PredictedMono"]).item()
+        pred_max = torch.max(depth["PredictedMono"]).item()
+        # Cvt to uint16 and mm from m
         depth = {k: np.uint16(v) * 1000 for k, v in depth.items()}
-        print(f'\nGT Avg: {torch.mean(depth["GT"]).item():.2f} Max: {torch.max(depth["GT"]).item():.2f}')
-        print(f'\nPredMono Avg: {torch.mean(depth["PredictedMono"]).item():.2f} Max: {torch.max(depth["PredictedMono"]).item():.2f}')
+        mean_d_16 = torch.mean(depth["GT"]).item()
+        max_d_16 = torch.max(depth["GT"]).item()
+        pred_mean_16 = torch.mean(depth["PredictedMono"]).item()
+        pred_max_16 = torch.max(depth["PredictedMono"]).item()
+        print(f'\nGT Avg: {mean_d:.2f} Max: {max_d:.2f} | uint16 {mean_d_16}  {max_d_16}')
+        print(f'\nPredMono Avg: {pred_mean:.2f} Max: {pred_max:.2f}| uint16 {pred_mean_16}  {pred_max_16}')
+
         images = {**rgb, **depth, **scalar_field}
         # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
