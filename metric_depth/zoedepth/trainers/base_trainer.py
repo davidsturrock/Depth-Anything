@@ -307,10 +307,10 @@ class BaseTrainer:
         pred_max = torch.max(depth["PredictedMono"]).item()
         # Cvt to uint16 and mm from m
         depth = {k: np.uint16(v) * 1000 for k, v in depth.items()}
-        mean_d_16 = torch.mean(depth["GT"]).item()
-        max_d_16 = torch.max(depth["GT"]).item()
-        pred_mean_16 = torch.mean(depth["PredictedMono"]).item()
-        pred_max_16 = torch.max(depth["PredictedMono"]).item()
+        mean_d_16 = np.mean(depth["GT"])
+        max_d_16 = np.max(depth["GT"])
+        pred_mean_16 = np.mean(depth["PredictedMono"])
+        pred_max_16 = np.max(depth["PredictedMono"])
         print(f'\nGT Avg: {mean_d:.2f} Max: {max_d:.2f} | uint16 {mean_d_16}  {max_d_16}')
         print(f'\nPredMono Avg: {pred_mean:.2f} Max: {pred_max:.2f}| uint16 {pred_mean_16}  {pred_max_16}')
 
