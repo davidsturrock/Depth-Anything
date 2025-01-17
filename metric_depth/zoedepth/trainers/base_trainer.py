@@ -302,10 +302,10 @@ class BaseTrainer:
 
 
         # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
-        mean_d = np.mean(depth["GT"])
-        max_d = np.max(depth["GT"])
-        pred_mean = np.mean(depth["PredictedMono"])
-        pred_max = np.max(depth["PredictedMono"])
+        mean_d = torch.mean(depth["GT"])
+        max_d = torch.max(depth["GT"])
+        pred_mean = torch.mean(depth["PredictedMono"])
+        pred_max = torch.max(depth["PredictedMono"])
 
         print(f'\nPREOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
         print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
