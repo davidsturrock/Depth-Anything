@@ -40,6 +40,8 @@ from tqdm import tqdm
 from zoedepth.utils.config import flatten
 from zoedepth.utils.misc import RunningAverageDict, colorize, colors
 
+from metric_depth.zoedepth.utils.misc import save_raw_16bit
+
 
 def is_rank_zero(args):
     return args.rank == 0
@@ -325,6 +327,8 @@ class BaseTrainer:
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode='I;16') for k, v in images.items()]}
         wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
+        save_raw_16bit(depth["GT"],fpath=f"/scratch/01475322/data/raw_depth_images/depth_gt_{self.step}")
+        save_raw_16bit(depth["PredictedMono"],fpath=f"/scratch/01475322/data/raw_depth_images/depth_pred_{self.step}")
 
     def log_line_plot(self, data):
         if not self.should_log:

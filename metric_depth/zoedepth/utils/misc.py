@@ -365,4 +365,4 @@ def save_raw_16bit(depth, fpath="raw.png"):
     depth = depth.astype(np.uint16)
     depth = Image.fromarray(depth)
     depth.save(fpath)
-    print("Saved raw depth to", fpath)
+    # print("Saved raw depth to", fpath)
