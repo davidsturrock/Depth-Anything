@@ -302,16 +302,17 @@ class BaseTrainer:
 
 
         # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
-        mean_d = torch.mean(depth["GT"])
-        max_d = torch.max(depth["GT"])
-        pred_mean = torch.mean(depth["PredictedMono"])
-        pred_max = torch.max(depth["PredictedMono"])
+        depth = {k: v.squeeze().detach().cpu().numpy() for k, v in depth.items()}
+        mean_d = np.mean(depth["GT"])
+        max_d = np.max(depth["GT"])
+        pred_mean = np.mean(depth["PredictedMono"])
+        pred_max = np.max(depth["PredictedMono"])
 
         print(f'\nPREOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
         print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
 
         # Cvt to uint16 and mm from m
-        depth = {k: np.uint16(v.squeeze().cpu().detach().numpy() * 1000) for k, v in depth.items()}
+        depth = {k: np.uint16(v * 1000) for k, v in depth.items()}
 
         mean_d = np.mean(depth["GT"])
         max_d = np.max(depth["GT"])
@@ -324,10 +325,10 @@ class BaseTrainer:
 
         images = {**rgb, **depth, **scalar_field}
         # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
-        # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
-        #                                   for k, v in images.items()]}
+        wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
+                                          for k, v in images.items()]}
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode='I;16') for k, v in images.items()]}
-        wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
+        # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
 
 
