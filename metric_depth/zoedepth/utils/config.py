@@ -88,12 +88,11 @@ DATASETS_CONFIG = {
         "min_depth_eval": 1e-3,
         "max_depth_eval": 20,
 
-        "do_random_rotate": True,
+        "do_random_rotate": False,
         "degree": 1.0,
-        "do_kb_crop": True,
-        "garg_crop": True,
+        "do_kb_crop": False,
+        "garg_crop": False,
         "eigen_crop": False,
-        "use_right": False
     },
     "kitti_test": {
         "dataset": "kitti",
