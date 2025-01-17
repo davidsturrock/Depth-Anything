@@ -33,8 +33,8 @@ import platform
 
 ROOT = pathlib.Path(__file__).parent.parent.resolve()
 
-# HOME_DIR = os.path.expanduser("~/data")
-HOME_DIR = "/scratch/01475322/data"
+HOME_DIR = os.path.expanduser("~/data")
+# HOME_DIR = "/scratch/01475322/data"
 
 COMMON_CONFIG = {
     # "save_dir": os.path.expanduser("./depth_anything_finetune"),
@@ -88,10 +88,10 @@ DATASETS_CONFIG = {
         "min_depth_eval": 1e-3,
         "max_depth_eval": 20,
 
-        "do_random_rotate": False,
+        "do_random_rotate": True,
         "degree": 1.0,
-        "do_kb_crop": False,
-        "garg_crop": False,
+        "do_kb_crop": True,
+        "garg_crop": True,
         "eigen_crop": False,
     },
     "kitti_test": {
