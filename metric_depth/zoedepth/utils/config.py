@@ -33,9 +33,9 @@ import platform
 
 ROOT = pathlib.Path(__file__).parent.parent.resolve()
 
-HOME_DIR = os.path.expanduser("~/data")
-# HOME_DIR = "/scratch/01475322/data"
-
+# HOME_DIR = os.path.expanduser("~/data")
+HOME_DIR = "/scratch/01475322/data"
+HP
 COMMON_CONFIG = {
     # "save_dir": os.path.expanduser("./depth_anything_finetune"),
     "save_dir": "/scratch/01475322/depth_anything_finetune",
