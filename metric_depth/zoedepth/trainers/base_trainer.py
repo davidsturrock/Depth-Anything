@@ -308,12 +308,10 @@ class BaseTrainer:
         max_d = np.max(depth["GT"])
         pred_mean = np.mean(depth["PredictedMono"])
         pred_max = np.max(depth["PredictedMono"])
+        pred_min = np.min(depth["PredictedMono"])
         print(f'\nPREOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
-        print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
-        print(f'Len depth dict {len(depth)} GT shape {depth["GT"].shape} Pred shape {depth["PredictedMono"].shape}')
+        print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f} Min {pred_min:.2f}')
 
-        #TODO check avg inconsistencies between pre and post op. Possible dict mutable issue?
-        # Check dict size and array dims before and after
 
         # Cvt to uint16 and mm from m
         depth = {k: np.uint16(v * 1000) for k, v in depth.items()}
@@ -322,21 +320,21 @@ class BaseTrainer:
         max_d = np.max(depth["GT"])
         pred_mean = np.mean(depth["PredictedMono"])
         pred_max = np.max(depth["PredictedMono"])
+        pred_min = np.min(depth["PredictedMono"])
 
         print(f'\nPOSTOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
-        print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
-        print(f'Len depth dict {len(depth)} GT shape {depth["GT"].shape} Pred shape {depth["PredictedMono"].shape}')
+        print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f} Min {pred_min:.2f}')
 
+        # Wandb.Image by default normalises imgs, to avoid this we first make PIL images of the depths specifying uint16
         depth["GT"] = Image.fromarray(depth["GT"], mode='I;16')
         depth["PredictedMono"] = Image.fromarray(depth["PredictedMono"], mode='I;16')
-        d_img = depth["GT"]
-        d_img.save(f"/scratch/01475322/data/depth_gt_{self.step}.png")
+
         images = {**rgb, **depth, **scalar_field}
 
         # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
         wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
                                           for k, v in images.items()]}
-        # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode='I;16') for k, v in images.items()]}
+
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
 
