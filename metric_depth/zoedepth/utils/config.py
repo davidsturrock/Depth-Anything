@@ -84,7 +84,7 @@ DATASETS_CONFIG = {
         "data_path_eval": os.path.join(HOME_DIR, "oranges/splits/val"),
         "gt_path_eval": os.path.join(HOME_DIR, "oranges/splits/val"),
         "filenames_file_eval": "./train_test_inputs/oranges_test_files_with_gt.txt",
-
+        "img_size": [720, 1280],
         "min_depth_eval": 1e-3,
         "max_depth_eval": 20,
 
