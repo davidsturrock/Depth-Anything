@@ -303,27 +303,28 @@ class BaseTrainer:
 
 
         # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
-        depth = {k: v.squeeze().detach().cpu().numpy() for k, v in depth.items()}
-        mean_d = np.mean(depth["GT"])
-        max_d = np.max(depth["GT"])
-        pred_mean = np.mean(depth["PredictedMono"])
-        pred_max = np.max(depth["PredictedMono"])
-        pred_min = np.min(depth["PredictedMono"])
-        print(f'\nPREOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
-        print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f} Min {pred_min:.2f}')
+        # depth = {k: v.squeeze().detach().cpu().numpy() for k, v in depth.items()}
+        # mean_d = np.mean(depth["GT"])
+        # max_d = np.max(depth["GT"])
+        # pred_mean = np.mean(depth["PredictedMono"])
+        # pred_max = np.max(depth["PredictedMono"])
+        # pred_min = np.min(depth["PredictedMono"])
+        # print(f'\nPREOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
+        # print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f} Min {pred_min:.2f}')
 
 
         # Cvt to uint16 and mm from m
-        depth = {k: np.uint16(v * 1000) for k, v in depth.items()}
+        depth = {k: np.uint16(v.squeeze().detach().cpu().numpy() * 1000) for k, v in depth.items()}
+        # depth = {k: np.uint16(v * 1000) for k, v in depth.items()}
 
-        mean_d = np.mean(depth["GT"])
-        max_d = np.max(depth["GT"])
-        pred_mean = np.mean(depth["PredictedMono"])
-        pred_max = np.max(depth["PredictedMono"])
-        pred_min = np.min(depth["PredictedMono"])
+        # mean_d = np.mean(depth["GT"])
+        # max_d = np.max(depth["GT"])
+        # pred_mean = np.mean(depth["PredictedMono"])
+        # pred_max = np.max(depth["PredictedMono"])
+        # pred_min = np.min(depth["PredictedMono"])
 
-        print(f'\nPOSTOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
-        print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f} Min {pred_min:.2f}')
+        # print(f'\nPOSTOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
+        # print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f} Min {pred_min:.2f}')
 
         # Wandb.Image by default normalises imgs, to avoid this we first make PIL images of the depths specifying uint16
         depth["GT"] = Image.fromarray(depth["GT"], mode='I;16')
