@@ -38,9 +38,8 @@ import wandb
 from tqdm import tqdm
 
 from zoedepth.utils.config import flatten
-from zoedepth.utils.misc import RunningAverageDict, colorize, colors
+from zoedepth.utils.misc import RunningAverageDict, colorize, colors, save_raw_16bit
 
-from metric_depth.zoedepth.utils.misc import save_raw_16bit
 
 
 def is_rank_zero(args):
