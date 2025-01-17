@@ -28,6 +28,7 @@ import warnings
 from datetime import datetime as dt
 from typing import Dict
 
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -299,26 +300,28 @@ class BaseTrainer:
                 min_depth = None
                 max_depth = None
 
-        depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
-                 for k, v in depth.items()}
+
         # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         mean_d = np.mean(depth["GT"])
         max_d = np.max(depth["GT"])
-        min_d = np.min(depth["GT"])
         pred_mean = np.mean(depth["PredictedMono"])
         pred_max = np.max(depth["PredictedMono"])
-        pred_min = np.min(depth["PredictedMono"])
-        # Cvt to uint16 and mm from m
-        # depth = {k: np.uint16(v) * 1000 for k, v in depth.items()}
 
-        # mean_d_16 = np.mean(depth["GT"])
-        # max_d_16 = np.max(depth["GT"])
-        # pred_mean_16 = np.mean(depth["PredictedMono"])
-        # pred_max_16 = np.max(depth["PredictedMono"])
-        # print(f'\nGT Avg: {mean_d:.2f} Max: {max_d:.2f} | uint16 {mean_d_16}  {max_d_16}')
-        # print(f'\nPredMono Avg: {pred_mean:.2f} Max: {pred_max:.2f}| uint16 {pred_mean_16}  {pred_max_16}')
-        print(f'GT Datatype: {depth["GT"].dtype} | Predicted Datatype: {depth["PredictedMono"].dtype}')
-        print(f'\nGT Avg: {mean_d:.2f} Max: {max_d:.2f} Min: {min_d:.2f}|PredMono {pred_mean:.2f} {pred_max:.2f} {pred_min:.2f}')
+        print(f'\nPREOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
+        print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
+
+        # Cvt to uint16 and mm from m
+        depth = {k: np.uint16(v.squeeze().cpu().numpy() * 1000) for k, v in depth.items()}
+
+        mean_d = np.mean(depth["GT"])
+        max_d = np.max(depth["GT"])
+        pred_mean = np.mean(depth["PredictedMono"])
+        pred_max = np.max(depth["PredictedMono"])
+
+        print(f'\nPOSTOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
+        print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
+
+
         images = {**rgb, **depth, **scalar_field}
         # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
@@ -326,8 +329,7 @@ class BaseTrainer:
         # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode='I;16') for k, v in images.items()]}
         wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
-        save_raw_16bit(depth["GT"],fpath=f"/scratch/01475322/data/raw_depth_images/depth_gt_{self.step}")
-        save_raw_16bit(depth["PredictedMono"],fpath=f"/scratch/01475322/data/raw_depth_images/depth_pred_{self.step}")
+
 
     def log_line_plot(self, data):
         if not self.should_log:
