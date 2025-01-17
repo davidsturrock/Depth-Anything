@@ -90,7 +90,7 @@ DATASETS_CONFIG = {
 
         "do_random_rotate": True,
         "degree": 1.0,
-        "do_kb_crop": True,
+        "do_kb_crop": False,
         "garg_crop": True,
         "eigen_crop": False,
     },
