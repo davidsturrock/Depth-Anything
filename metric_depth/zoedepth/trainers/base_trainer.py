@@ -311,7 +311,7 @@ class BaseTrainer:
         print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
 
         # Cvt to uint16 and mm from m
-        depth = {k: np.uint16(v.squeeze().cpu().numpy() * 1000) for k, v in depth.items()}
+        depth = {k: np.uint16(v.squeeze().cpu().detach().numpy() * 1000) for k, v in depth.items()}
 
         mean_d = np.mean(depth["GT"])
         max_d = np.max(depth["GT"])
