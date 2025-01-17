@@ -307,9 +307,12 @@ class BaseTrainer:
         max_d = np.max(depth["GT"])
         pred_mean = np.mean(depth["PredictedMono"])
         pred_max = np.max(depth["PredictedMono"])
-
         print(f'\nPREOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
         print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
+        print(f'Len depth dict {len(depth)} GT shape {depth["GT"].shape} Pred shape {depth["PredictedMono"].shape}')
+
+        #TODO check avg inconsistencies between pre and post op. Possible dict mutable issue?
+        # Check dict size and array dims before and after
 
         # Cvt to uint16 and mm from m
         depth = {k: np.uint16(v * 1000) for k, v in depth.items()}
@@ -321,6 +324,7 @@ class BaseTrainer:
 
         print(f'\nPOSTOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
         print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
+        print(f'Len depth dict {len(depth)} GT shape {depth["GT"].shape} Pred shape {depth["PredictedMono"].shape}')
 
 
         images = {**rgb, **depth, **scalar_field}
