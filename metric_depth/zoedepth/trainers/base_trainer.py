@@ -31,6 +31,7 @@ from typing import Dict
 import cv2
 import matplotlib.pyplot as plt
 import numpy as np
+from PIL import Image
 import torch
 import torch.distributed as dist
 import torch.nn as nn
@@ -326,8 +327,12 @@ class BaseTrainer:
         print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f}')
         print(f'Len depth dict {len(depth)} GT shape {depth["GT"].shape} Pred shape {depth["PredictedMono"].shape}')
 
-
+        depth["GT"] = Image.fromarray(depth["GT"], mode='I;16')
+        depth["PredictedMono"] = Image.fromarray(depth["PredictedMono"], mode='I;16')
+        d_img = depth["GT"]
+        d_img.save(f"/scratch/01475322/data/depth_gt_{self.step}.png")
         images = {**rgb, **depth, **scalar_field}
+
         # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
         wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
                                           for k, v in images.items()]}
