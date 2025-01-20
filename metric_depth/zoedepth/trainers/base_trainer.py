@@ -28,10 +28,8 @@ import warnings
 from datetime import datetime as dt
 from typing import Dict
 
-import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-from PIL import Image
 import torch
 import torch.distributed as dist
 import torch.nn as nn
@@ -40,8 +38,7 @@ import wandb
 from tqdm import tqdm
 
 from zoedepth.utils.config import flatten
-from zoedepth.utils.misc import RunningAverageDict, colorize, colors, save_raw_16bit
-
+from zoedepth.utils.misc import RunningAverageDict, colorize, colors
 
 
 def is_rank_zero(args):
@@ -289,7 +286,7 @@ class BaseTrainer:
                 "epoch": self.epoch
             }, fpath)
 
-    def log_images(self, rgb: Dict[str, list] = {}, depth: Dict[str, list] = {}, scalar_field: Dict[str, list] = {}, prefix="", scalar_cmap="gray_r", min_depth=None, max_depth=None):
+    def log_images(self, rgb: Dict[str, list] = {}, depth: Dict[str, list] = {}, scalar_field: Dict[str, list] = {}, prefix="", scalar_cmap="jet", min_depth=None, max_depth=None):
         if not self.should_log:
             return
 
@@ -301,44 +298,14 @@ class BaseTrainer:
                 min_depth = None
                 max_depth = None
 
-
-        # scalar_field = {k: colorize(v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
-        # depth = {k: v.squeeze().detach().cpu().numpy() for k, v in depth.items()}
-        # mean_d = np.mean(depth["GT"])
-        # max_d = np.max(depth["GT"])
-        # pred_mean = np.mean(depth["PredictedMono"])
-        # pred_max = np.max(depth["PredictedMono"])
-        # pred_min = np.min(depth["PredictedMono"])
-        # print(f'\nPREOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
-        # print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f} Min {pred_min:.2f}')
-
-
-        # Cvt to uint16 and mm from m
-        depth = {k: np.uint16(v.squeeze().detach().cpu().numpy() * 1000) for k, v in depth.items()}
-        # depth = {k: np.uint16(v * 1000) for k, v in depth.items()}
-
-        # mean_d = np.mean(depth["GT"])
-        # max_d = np.max(depth["GT"])
-        # pred_mean = np.mean(depth["PredictedMono"])
-        # pred_max = np.max(depth["PredictedMono"])
-        # pred_min = np.min(depth["PredictedMono"])
-
-        # print(f'\nPOSTOP GT dtype: {depth["GT"].dtype} | Pred dtype: {depth["PredictedMono"].dtype}')
-        # print(f'GT Avg: {mean_d:.2f} Max: {max_d:.2f}| Pred {pred_mean:.2f} {pred_max:.2f} Min {pred_min:.2f}')
-
-        # Wandb.Image by default normalises imgs, to avoid this we first make PIL images of the depths specifying uint16
-        depth["GT"] = Image.fromarray(depth["GT"], mode='I;16')
-        depth["PredictedMono"] = Image.fromarray(depth["PredictedMono"], mode='I;16')
-
+        depth = {k: colorize(v, vmin=min_depth, vmax=max_depth)
+                 for k, v in depth.items()}
+        scalar_field = {k: colorize(
+            v, vmin=None, vmax=None, cmap=scalar_cmap) for k, v in scalar_field.items()}
         images = {**rgb, **depth, **scalar_field}
-
-        # Specify 'I;16' uint16 when saving the depth images or None (default val) for RGB image
-        wimages = {prefix+"Predictions": [wandb.Image(v, caption=k, mode = None if 'Input' in k else 'I;16')
-                                          for k, v in images.items()]}
-
-        # wimages = {prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
+        wimages = {
+            prefix+"Predictions": [wandb.Image(v, caption=k) for k, v in images.items()]}
         wandb.log(wimages, step=self.step)
-
 
     def log_line_plot(self, data):
         if not self.should_log:
