@@ -39,6 +39,7 @@ HOME_DIR = "/scratch/01475322/data"
 COMMON_CONFIG = {
     # "save_dir": os.path.expanduser("./depth_anything_finetune"),
     "save_dir": "/scratch/01475322/depth_anything_finetune",
+    "save_images": "/scratch/01475322/evaluation",
     "project": "ZoeDepth",
     "tags": '',
     "notes": "",
