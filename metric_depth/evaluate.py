@@ -126,7 +126,7 @@ def eval_model(model_name, pretrained_resource, dataset='nyu', **kwargs):
     # Load default pretrained resource defined in config if not set
     overwrite = {**kwargs, "pretrained_resource": pretrained_resource} if pretrained_resource else kwargs
     config = get_config(model_name, "eval", dataset, **overwrite)
-    config.save_images = "/home/sil/data/saved_images/"
+
     # config = change_dataset(config, dataset)  # change the dataset
     pprint(config)
     print(f"Evaluating {model_name} on {dataset}...")
