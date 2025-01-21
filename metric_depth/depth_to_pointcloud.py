@@ -14,6 +14,8 @@ import torchvision.transforms as transforms
 import open3d as o3d
 from PIL.Image import Resampling
 from tqdm import tqdm
+
+from metric_depth.zoedepth.utils.misc import colorize
 from zoedepth.models.builder import build_model
 from zoedepth.utils.config import get_config
 
@@ -52,24 +54,27 @@ def process_images(model):
             elif isinstance(pred, (list, tuple)):
                 pred = pred[-1]
             pred = pred.squeeze().detach().cpu().numpy()
+            p = colorize(pred, 0, 20)
+            name = image_path.split('/')[-1]
+            Image.fromarray(p).save(os.path.join(OUTPUT_DIR, name))
 
             # Resize color image and depth to final size
-            resized_color_image = color_image.resize((FINAL_WIDTH, FINAL_HEIGHT), Resampling.LANCZOS)
-            resized_pred = Image.fromarray(pred).resize((FINAL_WIDTH, FINAL_HEIGHT), Resampling.NEAREST)
-
-            focal_length_x, focal_length_y = (FX, FY) if not NYU_DATA else (FL, FL)
-            x, y = np.meshgrid(np.arange(FINAL_WIDTH), np.arange(FINAL_HEIGHT))
-            x = (x - FINAL_WIDTH / 2) / focal_length_x
-            y = (y - FINAL_HEIGHT / 2) / focal_length_y
-            z = np.array(resized_pred)
-            points = np.stack((np.multiply(x, z), np.multiply(y, z), z), axis=-1).reshape(-1, 3)
-            colors = np.array(resized_color_image).reshape(-1, 3) / 255.0
-
-            pcd = o3d.geometry.PointCloud()
-            pcd.points = o3d.utility.Vector3dVector(points)
-            pcd.colors = o3d.utility.Vector3dVector(colors)
-            o3d.io.write_point_cloud(os.path.join(OUTPUT_DIR,
-                                                  os.path.splitext(os.path.basename(image_path))[0] + ".pcd"), pcd)
+            # resized_color_image = color_image.resize((FINAL_WIDTH, FINAL_HEIGHT), Resampling.LANCZOS)
+            # resized_pred = Image.fromarray(pred).resize((FINAL_WIDTH, FINAL_HEIGHT), Resampling.NEAREST)
+            #
+            # focal_length_x, focal_length_y = (FX, FY) if not NYU_DATA else (FL, FL)
+            # x, y = np.meshgrid(np.arange(FINAL_WIDTH), np.arange(FINAL_HEIGHT))
+            # x = (x - FINAL_WIDTH / 2) / focal_length_x
+            # y = (y - FINAL_HEIGHT / 2) / focal_length_y
+            # z = np.array(resized_pred)
+            # points = np.stack((np.multiply(x, z), np.multiply(y, z), z), axis=-1).reshape(-1, 3)
+            # colors = np.array(resized_color_image).reshape(-1, 3) / 255.0
+            #
+            # pcd = o3d.geometry.PointCloud()
+            # pcd.points = o3d.utility.Vector3dVector(points)
+            # pcd.colors = o3d.utility.Vector3dVector(colors)
+            # o3d.io.write_point_cloud(os.path.join(OUTPUT_DIR,
+            #                                       os.path.splitext(os.path.basename(image_path))[0] + ".pcd"), pcd)
         except Exception as e:
             print(f"Error processing {image_path}: {e}")
 
