@@ -1,5 +1,6 @@
 # Born out of Issue 36. 
-# Allows  the user to set up own test files to infer on (Create a folder my_test and add subfolder input and output in the metric_depth directory before running this script.)
+# Allows  the user to set up own test files to infer on (Create a folder my_test
+# and add subfolder input and output in the metric_depth directory before running this script.)
 # Make sure you have the necessary libraries
 # Code by @1ssb
 
@@ -17,25 +18,32 @@ from zoedepth.utils.config import get_config
 
 # Global settings
 FL = 715.0873
-FY = 256 * 0.6
-FX = 256 * 0.6
+# FY = 256 * 0.6
+# FX = 256 * 0.6
+# FX & FY For Oranges
+FX = 527.559
+FY = 528.5624579927512
 NYU_DATA = False
 FINAL_HEIGHT = 256
 FINAL_WIDTH = 256
-INPUT_DIR = './my_test/input'
-OUTPUT_DIR = './my_test/output'
+
+INPUT_DIR = '/scratch/01475322/data/oranges/image'
+OUTPUT_DIR = '/scratch/01475322/data/oranges/ply'
 DATASET = 'nyu' # Lets not pick a fight with the model's dataloader
+DATASET = 'oranges' # Lets not pick a fight with the model's dataloader
 
 def process_images(model):
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
 
     image_paths = glob.glob(os.path.join(INPUT_DIR, '*.png')) + glob.glob(os.path.join(INPUT_DIR, '*.jpg'))
+    image_paths = [img for img in image_paths if 'img' in img]
     for image_path in tqdm(image_paths, desc="Processing Images"):
         try:
             color_image = Image.open(image_path).convert('RGB')
             original_width, original_height = color_image.size
-            image_tensor = transforms.ToTensor()(color_image).unsqueeze(0).to('cuda' if torch.cuda.is_available() else 'cpu')
+            image_tensor = (transforms.ToTensor()(color_image).
+                            unsqueeze(0).to('cuda' if torch.cuda.is_available() else 'cpu'))
 
             pred = model(image_tensor, dataset=DATASET)
             if isinstance(pred, dict):
@@ -59,7 +67,8 @@ def process_images(model):
             pcd = o3d.geometry.PointCloud()
             pcd.points = o3d.utility.Vector3dVector(points)
             pcd.colors = o3d.utility.Vector3dVector(colors)
-            o3d.io.write_point_cloud(os.path.join(OUTPUT_DIR, os.path.splitext(os.path.basename(image_path))[0] + ".ply"), pcd)
+            o3d.io.write_point_cloud(os.path.join(OUTPUT_DIR,
+                                                  os.path.splitext(os.path.basename(image_path))[0] + ".ply"), pcd)
         except Exception as e:
             print(f"Error processing {image_path}: {e}")
 
@@ -73,7 +82,10 @@ def main(model_name, pretrained_resource):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("-m", "--model", type=str, default='zoedepth', help="Name of the model to test")
-    parser.add_argument("-p", "--pretrained_resource", type=str, default='local::./checkpoints/depth_anything_metric_depth_indoor.pt', help="Pretrained resource to use for fetching weights.")
+    parser.add_argument("-p", "--pretrained_resource", type=str,
+                        default='local::/scratch/01475322/depth_anything_finetune/'
+                                'ZoeDepthv1_20-Jan_13-57-669cdb20e5ec_best.pt',
+                        help="Pretrained resource to use for fetching weights.")
 
     args = parser.parse_args()
     main(args.model, args.pretrained_resource)
