@@ -8,6 +8,7 @@ import argparse
 import os
 import glob
 import torch
+import torch.nn as nn
 import numpy as np
 from PIL import Image
 import torchvision.transforms as transforms
@@ -53,8 +54,12 @@ def process_images(model):
                 pred = pred.get('metric_depth', pred.get('out'))
             elif isinstance(pred, (list, tuple)):
                 pred = pred[-1]
+            pred = nn.functional.interpolate(
+                pred[None], image_tensor.shape[-2:], mode='bilinear', align_corners=True)[0, 0]
+            print(pred.shape)
             pred = pred.squeeze().detach().cpu().numpy()
             p = colorize(pred, 0, 20)
+
             name = image_path.split('/')[-1]
             Image.fromarray(p).save(os.path.join(OUTPUT_DIR, name))
 
