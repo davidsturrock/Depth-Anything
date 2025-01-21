@@ -32,7 +32,7 @@ FINAL_HEIGHT = 256
 FINAL_WIDTH = 256
 
 INPUT_DIR = '/scratch/01475322/data/oranges/image'
-OUTPUT_DIR = '/scratch/01475322/data/oranges/ply'
+OUTPUT_DIR = '/scratch/01475322/data/oranges/raw_depth'
 DATASET = 'nyu' # Lets not pick a fight with the model's dataloader
 DATASET = 'oranges' # Lets not pick a fight with the model's dataloader
 
@@ -56,8 +56,8 @@ def process_images(model):
                 pred = pred[-1]
             pred = nn.functional.interpolate(
                 pred, (720,1280), mode='bilinear', align_corners=True)
-            pred = pred.squeeze().detach().cpu().numpy()
-            p = colorize(pred, 0, 20)
+            p = pred.squeeze().detach().cpu().numpy().astype(np.uint16)
+            # p = colorize(pred, 0, 20)
 
             name = image_path.split('/')[-1]
             Image.fromarray(p).save(os.path.join(OUTPUT_DIR, name))
