@@ -37,7 +37,7 @@ def process_images(model):
         os.makedirs(OUTPUT_DIR)
 
     image_paths = glob.glob(os.path.join(INPUT_DIR, '*.png')) + glob.glob(os.path.join(INPUT_DIR, '*.jpg'))
-    image_paths = [img for img in image_paths if 'img' in img]
+    # image_paths = [img for img in image_paths if 'img' in img]
     for image_path in tqdm(image_paths, desc="Processing Images"):
         try:
             color_image = Image.open(image_path).convert('RGB')
