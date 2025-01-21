@@ -55,7 +55,7 @@ def process_images(model):
             elif isinstance(pred, (list, tuple)):
                 pred = pred[-1]
             pred = nn.functional.interpolate(
-                pred[None], image_tensor.shape[-2:], mode='bilinear', align_corners=True)[0, 0]
+                pred, (720,1280), mode='bilinear', align_corners=True)
             print(pred.shape)
             pred = pred.squeeze().detach().cpu().numpy()
             p = colorize(pred, 0, 20)
