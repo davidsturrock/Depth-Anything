@@ -12,6 +12,7 @@ import numpy as np
 from PIL import Image
 import torchvision.transforms as transforms
 import open3d as o3d
+from PIL.Image import Resampling
 from tqdm import tqdm
 from zoedepth.models.builder import build_model
 from zoedepth.utils.config import get_config
@@ -53,8 +54,8 @@ def process_images(model):
             pred = pred.squeeze().detach().cpu().numpy()
 
             # Resize color image and depth to final size
-            resized_color_image = color_image.resize((FINAL_WIDTH, FINAL_HEIGHT), Image.LANCZOS)
-            resized_pred = Image.fromarray(pred).resize((FINAL_WIDTH, FINAL_HEIGHT), Image.NEAREST)
+            resized_color_image = color_image.resize((FINAL_WIDTH, FINAL_HEIGHT), Resampling.LANCZOS)
+            resized_pred = Image.fromarray(pred).resize((FINAL_WIDTH, FINAL_HEIGHT), Resampling.NEAREST)
 
             focal_length_x, focal_length_y = (FX, FY) if not NYU_DATA else (FL, FL)
             x, y = np.meshgrid(np.arange(FINAL_WIDTH), np.arange(FINAL_HEIGHT))
@@ -68,7 +69,7 @@ def process_images(model):
             pcd.points = o3d.utility.Vector3dVector(points)
             pcd.colors = o3d.utility.Vector3dVector(colors)
             o3d.io.write_point_cloud(os.path.join(OUTPUT_DIR,
-                                                  os.path.splitext(os.path.basename(image_path))[0] + ".ply"), pcd)
+                                                  os.path.splitext(os.path.basename(image_path))[0] + ".pcd"), pcd)
         except Exception as e:
             print(f"Error processing {image_path}: {e}")
 
