@@ -15,7 +15,7 @@ import open3d as o3d
 from PIL.Image import Resampling
 from tqdm import tqdm
 
-from metric_depth.zoedepth.utils.misc import colorize
+from zoedepth.utils.misc import colorize
 from zoedepth.models.builder import build_model
 from zoedepth.utils.config import get_config
 
