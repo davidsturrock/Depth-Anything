@@ -56,7 +56,7 @@ def process_images(model):
                 pred = pred[-1]
             pred = nn.functional.interpolate(
                 pred, (720,1280), mode='bilinear', align_corners=True)
-            p = pred.squeeze().detach().cpu().numpy().astype(np.uint16)
+            p = pred.squeeze().detach().cpu().numpy().astype(np.uint16) * 1000
             # p = colorize(pred, 0, 20)
 
             name = image_path.split('/')[-1]
